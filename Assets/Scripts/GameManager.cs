@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
         isPlayingLevel = true;
         initEnvironment();
         initPlayer();
+        initObsticles();
     }
 
     // Update is called once per frame
@@ -28,9 +29,34 @@ public class GameManager : MonoBehaviour
         if (isPlayingLevel)
         {
             generateGround();
-
+            generateObsticles();
         }
     }
+
+    private void initObsticles()
+    {
+        for (int i = 0; i < currentLevel.ObstaclesPathCollection().Count; i++)
+        {
+            Obstacle obstacleItem = currentLevel.ObstaclesPathCollection()[i];
+
+            GameObject obstacle = Instantiate((GameObject)Resources.Load(obstacleItem.Prefab));
+            obstacle.transform.position = obstacleItem.Location;
+        }
+    }
+
+    private void generateObsticles()
+    {
+        // Update floatable objects
+        Obstacle[] floatables = (Obstacle[])FindObjectsOfType(typeof(Obstacle));
+        foreach (var coin in floatables)
+        {
+            if (playerObject.transform.position.z - coin.transform.position.z > 10)
+                Destroy(coin.gameObject);
+            else
+                (coin as Obstacle).transform.Translate(Vector3.back * GameSettings.MovingSpeed * Time.deltaTime);
+        }
+    }
+
 
     private void generateGround()
     {
@@ -45,7 +71,7 @@ public class GameManager : MonoBehaviour
                 groundObjectsPool.Remove(tileGameObject);
                 Destroy(tileGameObject);
 
-                int result = UnityEngine.Random.Range(0, currentLevel.GroundPathCollection().Count - 1);
+                //int result = UnityEngine.Random.Range(0, currentLevel.GroundPathCollection().Count - 1);
 
                 Vector3 newPosition = groundObjectsPool[groundObjectsPool.Count - 1].transform.position + new Vector3(0, 0, groundObjectsPool[groundObjectsPool.Count - 1].GetComponent<Renderer>().bounds.size.z);
                 tileGameObject = Instantiate((GameObject)Resources.Load(currentLevel.GroundPathCollection()[i]), newPosition, Quaternion.LookRotation(Vector3.forward));

@@ -13,7 +13,7 @@ namespace Assets.Scripts
         private Camera mainCamera;
         private Vector3 mainCameraOffset;
 
-        private ILevel currentLevel;
+        //private ILevel currentLevel;
         private Gyroscope gyro;
 
         private float leftRoadBodundary = -4.5f;
@@ -24,7 +24,7 @@ namespace Assets.Scripts
 
         void Awake()
         {
-            currentLevel = GameSettings.GetCurrentLevel();
+            //currentLevel = GameSettings.GetCurrentLevel();
         }
 
         protected void OnGUI()
@@ -51,6 +51,12 @@ namespace Assets.Scripts
 
         private void Update()
         {
+            HandleCarControl();
+        }
+
+        #region Car Controls
+        private void HandleCarControl()
+        {
             if (Input.GetKey("left") && transform.position.x > leftRoadBodundary)
                 transform.position = new Vector3(transform.position.x - sideSpeed, 0, 0);
 
@@ -58,7 +64,7 @@ namespace Assets.Scripts
             if (Input.GetKey("right") && transform.position.x < rigtRoadBodundary)
                 transform.position = new Vector3(transform.position.x + sideSpeed, 0, 0);
 
-           
+
             GyroModifyCamera();
         }
 
@@ -77,5 +83,6 @@ namespace Assets.Scripts
                     transform.position = new Vector3(transform.position.x - sideSpeed, 0, 0);
             }
         }
+        #endregion
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.Levels
 {
@@ -19,6 +20,17 @@ namespace Assets.Scripts.Levels
                 "Prefabs/Environment/TestRoad",
                 "Prefabs/Environment/TestRoad",
                 "Prefabs/Environment/TestRoad",
+            };
+        }
+
+        public List<Obstacle> ObstaclesPathCollection()
+        {
+            return new List<Obstacle>()
+            {
+                new Obstacle("Prefabs/Environment/RoadObstacle", new Vector3(0, 0, 10)),
+                new Obstacle("Prefabs/Environment/RoadObstacle", new Vector3(0, 0, 30)),
+                new Obstacle("Prefabs/Environment/RoadObstacle", new Vector3(0, 0, 50)),
+                new Obstacle("Prefabs/Environment/RoadObstacle", new Vector3(0, 0, 70)),
             };
         }
     }

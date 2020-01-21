@@ -10,5 +10,6 @@ namespace Assets.Scripts.Levels
     {
         int LevelIndex { get; }
         List<string> GroundPathCollection(); // prev: GetFloorPathCollection
+        List<Obstacle> ObstaclesPathCollection(); // prev: GetFloorPathCollection
     }
 }
