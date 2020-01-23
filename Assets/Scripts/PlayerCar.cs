@@ -44,6 +44,7 @@ namespace Assets.Scripts
 
             mainCamera = Camera.main;
             mainCameraOffset = mainCamera.transform.position - transform.position;
+            mainCamera.transform.SetParent(this.transform);
 
             gyro = Input.gyro;
             gyro.enabled = true;
