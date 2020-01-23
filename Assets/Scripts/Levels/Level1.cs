@@ -11,15 +11,15 @@ namespace Assets.Scripts.Levels
     {
         public int LevelIndex => 1;
 
-        public List<string> GroundPathCollection()
+        public List<RoadBlock> GroundPathCollection()
         {
-            return new List<string>()
+            return new List<RoadBlock>()
             {
-                "Prefabs/Environment/TestRoad",
-                "Prefabs/Environment/TestRoad",
-                "Prefabs/Environment/TestRoad",
-                "Prefabs/Environment/TestRoad",
-                "Prefabs/Environment/TestRoad",
+                 new RoadBlock("Prefabs/Environment/TestRoad", new Vector3(0, 0, 0)),
+                 new RoadBlock("Prefabs/Environment/TestRoad", new Vector3(0, 0, 20)),
+                 new RoadBlock("Prefabs/Environment/TestRoad", new Vector3(0, 0, 40)),
+                 new RoadBlock("Prefabs/Environment/TestRoad", new Vector3(0, 0, 60)),
+                 new RoadBlock("Prefabs/Environment/TestRoad", new Vector3(0, 0, 80)),
             };
         }
 

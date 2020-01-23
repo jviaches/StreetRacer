@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Levels;
+﻿using Assets.Scripts.Cars;
+using Assets.Scripts.Levels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +13,16 @@ namespace Assets.Scripts
     {
         private Camera mainCamera;
         private Vector3 mainCameraOffset;
+        private ICar car;
 
         //private ILevel currentLevel;
         private Gyroscope gyro;
 
-        private float leftRoadBodundary = -4.5f;
-        private float rigtRoadBodundary = 4.5f;
+        private readonly float leftRoadBodundary = -4.5f;
+        private readonly float rigtRoadBodundary = 4.5f;
         private float sideSpeed = 0.05f;
 
         public float Speed { get; set; }
-
-        void Awake()
-        {
-            //currentLevel = GameSettings.GetCurrentLevel();
-        }
 
         protected void OnGUI()
         {
@@ -33,9 +30,7 @@ namespace Assets.Scripts
 
             GUILayout.Label("Orientation: " + Screen.orientation);
             GUILayout.Label("input.gyro.attitude x: " + Input.gyro.attitude.x);
-            //GUILayout.Label("input.gyro.attitude y: " + Input.gyro.attitude.y);
-            //GUILayout.Label("input.gyro.attitude z: " + Input.gyro.attitude.z);
-            //GUILayout.Label("input.gyro.attitude w: " + Input.gyro.attitude.w);
+            GUILayout.Label("Car Speed: " + car.TopSpeed);
         }
 
         void Start()
@@ -45,6 +40,8 @@ namespace Assets.Scripts
             mainCamera = Camera.main;
             mainCameraOffset = mainCamera.transform.position - transform.position;
             mainCamera.transform.SetParent(this.transform);
+
+            car = GameSettings.SelectedCar;
 
             gyro = Input.gyro;
             gyro.enabled = true;

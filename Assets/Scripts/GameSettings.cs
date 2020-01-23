@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Levels;
+﻿using Assets.Scripts.Cars;
+using Assets.Scripts.Levels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,14 @@ namespace Assets.Scripts
     {
         // 1rs param level, 2nd param amount of stars, 3rd param score
         public static Dictionary<ILevel, KeyValuePair<int, int>> Episode1Levels = new Dictionary<ILevel, KeyValuePair<int, int>>();
+        public static List<ICar> playerCars = new List<ICar>();
 
         public static int SelectedLevelIndex = 0;                   // Level chosen by user
+        public static ICar SelectedCar;                     // Car chosen by user
         public static readonly float ValueIsNotSet = -1;
         public static float MovingSpeed = 5f;
         public static readonly float PlayVisibilityZcoordStart = 130; // Z axis from where player able to see the object
+
 
         static GameSettings()
         {
@@ -23,6 +27,7 @@ namespace Assets.Scripts
                 return;
 
             InitEpisode1();
+            InitPlayerCars();
         }
 
         private static void InitEpisode1()
@@ -36,6 +41,13 @@ namespace Assets.Scripts
         {
             int lvlIndex = SelectedLevelIndex == 0 ? 1 : SelectedLevelIndex;    // can be 0 in case if no games were played before
             return Episode1Levels.Keys.First(lvl => lvl.LevelIndex == lvlIndex);
+        }
+
+        public static void InitPlayerCars()
+        {
+            playerCars.Add(new TestCar());
+
+            SelectedCar = playerCars[0];
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts;
+using Assets.Scripts.Cars;
 using Assets.Scripts.Levels;
 using System;
 using System.Collections;
@@ -10,13 +11,14 @@ public class GameManager : MonoBehaviour
     private GameObject playerObject;
 
     private ILevel currentLevel;
+    private ICar playerCar;
     private bool isPlayingLevel;
-    private List<GameObject> groundObjectsPool;     // prev: floorPool
 
     // Start is called before the first frame update
     void Start()
     {
         currentLevel = GameSettings.GetCurrentLevel();
+        playerCar = GameSettings.SelectedCar;
         isPlayingLevel = true;
         initEnvironment();
         initPlayer();
@@ -46,64 +48,37 @@ public class GameManager : MonoBehaviour
 
     private void generateObsticles()
     {
-        // Update floatable objects
-        Obstacle[] floatables = (Obstacle[])FindObjectsOfType(typeof(Obstacle));
-        foreach (var coin in floatables)
+        // Update obstacles objects
+        Obstacle[] obstacles = (Obstacle[])FindObjectsOfType(typeof(Obstacle));
+        foreach (var obstacle in obstacles)
         {
-            if (playerObject.transform.position.z - coin.transform.position.z > 10)
-                Destroy(coin.gameObject);
+            if (playerObject.transform.position.z - obstacle.transform.position.z > 10)
+                Destroy(obstacle.gameObject);
             else
-                (coin as Obstacle).transform.Translate(Vector3.back * GameSettings.MovingSpeed * Time.deltaTime);
+                (obstacle as Obstacle).transform.Translate(Vector3.back * GameSettings.MovingSpeed * Time.deltaTime);
         }
     }
 
-
     private void generateGround()
     {
-        for (int i = 0; i < groundObjectsPool.ToArray().Length; i++)
+        RoadBlock[] roadBlocks = (RoadBlock[])FindObjectsOfType(typeof(RoadBlock));
+        foreach (var roadBlock in roadBlocks)
         {
-            GameObject tileGameObject = groundObjectsPool[i];
-            tileGameObject.transform.Translate(Vector3.back * GameSettings.MovingSpeed * Time.deltaTime);
-
-            RaycastHit hit;
-            if (Physics.Raycast(tileGameObject.transform.position, Vector3.back, out hit, 0.5f) && hit.transform.gameObject.tag == "ObjectErasePoint")
-            {
-                groundObjectsPool.Remove(tileGameObject);
-                Destroy(tileGameObject);
-
-                //int result = UnityEngine.Random.Range(0, currentLevel.GroundPathCollection().Count - 1);
-
-                Vector3 newPosition = groundObjectsPool[groundObjectsPool.Count - 1].transform.position + new Vector3(0, 0, groundObjectsPool[groundObjectsPool.Count - 1].GetComponent<Renderer>().bounds.size.z);
-                tileGameObject = Instantiate((GameObject)Resources.Load(currentLevel.GroundPathCollection()[i]), newPosition, Quaternion.LookRotation(Vector3.forward));
-
-                tileGameObject.transform.localScale += new Vector3(0, UnityEngine.Random.Range(1, 5), 0);
-                groundObjectsPool.Add(tileGameObject);
-            }
+            if (playerObject.transform.position.z - roadBlock.transform.position.z > 30)
+                Destroy(roadBlock.gameObject);
+            else
+                (roadBlock as RoadBlock).transform.Translate(Vector3.back * GameSettings.MovingSpeed * Time.deltaTime);
         }
     }
 
     private void initEnvironment()
     {
-        groundObjectsPool = new List<GameObject>();
-
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < currentLevel.GroundPathCollection().Count; i++)
         {
-            Vector3 newPosition = new Vector3();
-            GameObject gameObject;
+            RoadBlock roadBlockItem = currentLevel.GroundPathCollection()[i];
 
-            if (groundObjectsPool.Count > 0)
-            {
-                newPosition = groundObjectsPool[groundObjectsPool.Count - 1].transform.position + new Vector3(0, 0, groundObjectsPool[groundObjectsPool.Count - 1].GetComponent<Renderer>().bounds.size.z);
-                gameObject = Instantiate((GameObject)Resources.Load(currentLevel.GroundPathCollection()[i]), newPosition, Quaternion.LookRotation(Vector3.forward));
-            }
-            else
-            {
-                Debug.Log(currentLevel.GroundPathCollection()[i]);
-                gameObject = Instantiate((GameObject)Resources.Load(currentLevel.GroundPathCollection()[i]), newPosition, Quaternion.LookRotation(Vector3.forward));
-            }
-
-            gameObject.transform.localScale += new Vector3(0, UnityEngine.Random.Range(1, 5), 0);
-            groundObjectsPool.Add(gameObject);
+            GameObject obstacle = Instantiate((GameObject)Resources.Load(roadBlockItem.Prefab));
+            obstacle.transform.position = roadBlockItem.Location;
         }
     }
 

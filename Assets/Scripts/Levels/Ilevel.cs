@@ -9,7 +9,7 @@ namespace Assets.Scripts.Levels
     public interface ILevel
     {
         int LevelIndex { get; }
-        List<string> GroundPathCollection(); // prev: GetFloorPathCollection
+        List<RoadBlock> GroundPathCollection(); // prev: GetFloorPathCollection
         List<Obstacle> ObstaclesPathCollection(); // prev: GetFloorPathCollection
     }
 }
