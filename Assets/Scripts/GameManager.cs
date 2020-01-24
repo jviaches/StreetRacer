@@ -9,20 +9,33 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private GameObject playerObject;
-
+    private Camera mainCamera;
     private ILevel currentLevel;
     private ICar playerCar;
     private bool isPlayingLevel;
+    private float levelTimer;
+
+    protected void OnGUI()
+    {
+        GUI.skin.label.fontSize = Screen.width / 40;
+
+        GUILayout.Label("Timer: " + levelTimer);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        mainCamera = Camera.main;
         currentLevel = GameSettings.GetCurrentLevel();
         playerCar = GameSettings.SelectedCar;
-        isPlayingLevel = true;
+        
         initEnvironment();
         initPlayer();
-        initObsticles();
+        initStaticObsticles();
+        initMovingObsticles();
+
+        isPlayingLevel = true;
+        levelTimer = currentLevel.LevelTimerLimit;
     }
 
     // Update is called once per frame
@@ -30,32 +43,57 @@ public class GameManager : MonoBehaviour
     {
         if (isPlayingLevel)
         {
+            levelTimer -= Time.deltaTime;
             generateGround();
-            generateObsticles();
+            generateStaticObsticles();
+            generateMovingObsticles();
         }
     }
 
-    private void initObsticles()
+    private void initStaticObsticles()
     {
         for (int i = 0; i < currentLevel.ObstaclesPathCollection().Count; i++)
         {
-            Obstacle obstacleItem = currentLevel.ObstaclesPathCollection()[i];
+            StaticObstacle obstacleItem = currentLevel.ObstaclesPathCollection()[i];
 
             GameObject obstacle = Instantiate((GameObject)Resources.Load(obstacleItem.Prefab));
             obstacle.transform.position = obstacleItem.Location;
         }
     }
 
-    private void generateObsticles()
+    private void initMovingObsticles()
     {
-        // Update obstacles objects
-        Obstacle[] obstacles = (Obstacle[])FindObjectsOfType(typeof(Obstacle));
+        for (int i = 0; i < currentLevel.MovingObstaclesPathCollection().Count; i++)
+        {
+            MovingObstacle obstacleItem = currentLevel.MovingObstaclesPathCollection()[i];
+            Debug.LogWarning(obstacleItem.Speed+ " asd");
+
+            GameObject obstacle = Instantiate((GameObject)Resources.Load(obstacleItem.Prefab));
+            obstacle.transform.position = obstacleItem.Location;
+        }
+    }
+
+    private void generateStaticObsticles()
+    {
+        StaticObstacle[] obstacles = (StaticObstacle[])FindObjectsOfType(typeof(StaticObstacle));
         foreach (var obstacle in obstacles)
         {
             if (playerObject.transform.position.z - obstacle.transform.position.z > 10)
                 Destroy(obstacle.gameObject);
             else
-                (obstacle as Obstacle).transform.Translate(Vector3.back * GameSettings.MovingSpeed * Time.deltaTime);
+                (obstacle as StaticObstacle).transform.Translate(Vector3.back * GameSettings.MovingSpeed * Time.deltaTime);
+        }
+    }
+
+    private void generateMovingObsticles()
+    {
+        MovingObstacle[] obstacles = (MovingObstacle[])FindObjectsOfType(typeof(MovingObstacle));
+        foreach (var obstacle in obstacles)
+        {            
+            if (playerObject.transform.position.z - obstacle.transform.position.z > 10)
+                Destroy(obstacle.gameObject);
+            else
+                (obstacle as MovingObstacle).transform.Translate(Vector3.back * (GameSettings.MovingSpeed - obstacle.Speed) * Time.deltaTime);
         }
     }
 
@@ -84,7 +122,8 @@ public class GameManager : MonoBehaviour
 
     private void initPlayer()
     {
-        playerObject = Instantiate((GameObject)Resources.Load("Prefabs/Player/PlayerCar"));
-        playerObject.transform.position = new Vector3();
+        playerObject = Instantiate((GameObject)Resources.Load("Prefabs/Cars/Car1"));
+        mainCamera.transform.SetParent(playerObject.transform);
+        playerObject.transform.position = new Vector3(-2.11f,0,0);
     }
 }

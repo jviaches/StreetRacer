@@ -11,7 +11,6 @@ namespace Assets.Scripts
 {
     public class PlayerCar : MonoBehaviour // former PlayerScript
     {
-        private Camera mainCamera;
         private Vector3 mainCameraOffset;
         private ICar car;
 
@@ -24,23 +23,18 @@ namespace Assets.Scripts
 
         public float Speed { get; set; }
 
-        protected void OnGUI()
-        {
-            GUI.skin.label.fontSize = Screen.width / 40;
+        //protected void OnGUI()
+        //{
+        //    GUI.skin.label.fontSize = Screen.width / 40;
 
-            GUILayout.Label("Orientation: " + Screen.orientation);
-            GUILayout.Label("input.gyro.attitude x: " + Input.gyro.attitude.x);
-            GUILayout.Label("Car Speed: " + car.TopSpeed);
-        }
+        //    GUILayout.Label("Orientation: " + Screen.orientation);
+        //    GUILayout.Label("input.gyro.attitude x: " + Input.gyro.attitude.x);
+        //    GUILayout.Label("Car Speed: " + car.TopSpeed);
+        //}
 
         void Start()
         {
             Speed = 5f;
-
-            mainCamera = Camera.main;
-            mainCameraOffset = mainCamera.transform.position - transform.position;
-            mainCamera.transform.SetParent(this.transform);
-
             car = GameSettings.SelectedCar;
 
             gyro = Input.gyro;
@@ -50,6 +44,7 @@ namespace Assets.Scripts
         private void Update()
         {
             HandleCarControl();
+
         }
 
         #region Car Controls

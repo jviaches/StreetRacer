@@ -20,7 +20,6 @@ namespace Assets.Scripts
         public static float MovingSpeed = 5f;
         public static readonly float PlayVisibilityZcoordStart = 130; // Z axis from where player able to see the object
 
-
         static GameSettings()
         {
             if (Episode1Levels.Count > 0)
